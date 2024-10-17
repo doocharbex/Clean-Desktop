@@ -1,10 +1,12 @@
 import os
 import shutil
+import logging
 
+# Logging configuration
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Desktop path
-desktop_path = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')
-
+desktop_path = os.path.join(os.path.join(os.environ.get('USERPROFILE', ''), 'Desktop'))
 
 # Definition of formats and folders for each type of file
 file_types = {
@@ -13,16 +15,14 @@ file_types = {
     'Documents': ['.pdf', '.doc', '.docx', '.txt', '.ppt', '.pptx', '.xls', '.xlsx'],
     'Videos': ['.mp4', '.avi', '.mkv', '.mov', '.wmv'],
     'Compressed': ['.zip', '.rar', '.tar', '.gz'],
+    'Other': []  # Folder for unknown file types
 }
-
 
 # Path to put the grouped folders (made by the tool)
 organized_tool_created_path = os.path.join(desktop_path, 'OrganizedFoldersCreatedByTool')
 
 # The path to put the root folders that were already on the desktop
 organized_original_folders_path = os.path.join(desktop_path, 'OriginalFoldersOrganized')
-
-
 
 
 # Function to move files to the appropriate folder (built by the tool)
@@ -44,6 +44,7 @@ def organize_files():
         # only process files (not folders)
         if os.path.isfile(item_path):
             file_extension = os.path.splitext(item)[1].lower()
+            moved = False
             
             # Move files to the appropriate folder
             for folder, extensions in file_types.items():
@@ -57,12 +58,17 @@ def organize_files():
                     
                     try:
                         shutil.move(item_path, dest_folder)
-                        print(f'Moved {item} to {folder}')
+                        logging.info(f'Moved {item} to {folder}')
+                        moved = True
                     except PermissionError:
-                        print(f"PermissionError: Could not move {item}. It may be open in another program.")
+                        logging.error(f"PermissionError: Could not move {item}. It may be open in another program.")
                     break
-
-
+            
+            # If file was not moved, move it to "Other"
+            if not moved:
+                other_folder = os.path.join(organized_tool_created_path, 'Other')
+                shutil.move(item_path, other_folder)
+                logging.info(f'Moved {item} to Other')
 
 
 # Function to move the main desktop folders to the new folder
@@ -80,16 +86,14 @@ def organize_folders():
             dest_folder = os.path.join(organized_original_folders_path, item)
             try:
                 shutil.move(item_path, dest_folder)
-                print(f'Moved folder {item} to OriginalFoldersOrganized')
+                logging.info(f'Moved folder {item} to OriginalFoldersOrganized')
             except PermissionError:
-                print(f"PermissionError: Could not move folder {item}. It may be open in another program.")
-                
-                
-                
+                logging.error(f"PermissionError: Could not move folder {item}. It may be open in another program.")
+
+
 if __name__ == "__main__":
     # First, categorize the files and move them to a special folder
     organize_files()
 
     # Then move the folders on the desktop to another folder
     organize_folders()
-
