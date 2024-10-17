@@ -83,3 +83,13 @@ def organize_folders():
                 print(f'Moved folder {item} to OriginalFoldersOrganized')
             except PermissionError:
                 print(f"PermissionError: Could not move folder {item}. It may be open in another program.")
+                
+                
+                
+if __name__ == "__main__":
+    # First, categorize the files and move them to a special folder
+    organize_files()
+
+    # Then move the folders on the desktop to another folder
+    organize_folders()
+
