@@ -21,3 +21,43 @@ organized_tool_created_path = os.path.join(desktop_path, 'OrganizedFoldersCreate
 
 # The path to put the root folders that were already on the desktop
 organized_original_folders_path = os.path.join(desktop_path, 'OriginalFoldersOrganized')
+
+
+
+
+# Function to move files to the appropriate folder (built by the tool)
+def organize_files():
+    # First, make sure that the root folder for the files sorted by the tool exists
+    if not os.path.exists(organized_tool_created_path):
+        os.makedirs(organized_tool_created_path)
+
+    # Make sure folders for each file type exist inside the tool's root folder
+    for folder in file_types:
+        folder_path = os.path.join(organized_tool_created_path, folder)
+        if not os.path.exists(folder_path):
+            os.makedirs(folder_path)
+
+    # List of files on the desktop
+    for item in os.listdir(desktop_path):
+        item_path = os.path.join(desktop_path, item)
+        
+        # only process files (not folders)
+        if os.path.isfile(item_path):
+            file_extension = os.path.splitext(item)[1].lower()
+            
+            # Move files to the appropriate folder
+            for folder, extensions in file_types.items():
+                if file_extension in extensions:
+                    dest_folder = os.path.join(organized_tool_created_path, folder)
+                    dest_file_path = os.path.join(dest_folder, item)
+                    
+                    # Check if the file already exists, remove it
+                    if os.path.exists(dest_file_path):
+                        os.remove(dest_file_path)
+                    
+                    try:
+                        shutil.move(item_path, dest_folder)
+                        print(f'Moved {item} to {folder}')
+                    except PermissionError:
+                        print(f"PermissionError: Could not move {item}. It may be open in another program.")
+                    break
