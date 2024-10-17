@@ -15,3 +15,9 @@ file_types = {
     'Compressed': ['.zip', '.rar', '.tar', '.gz'],
 }
 
+
+# Path to put the grouped folders (made by the tool)
+organized_tool_created_path = os.path.join(desktop_path, 'OrganizedFoldersCreatedByTool')
+
+# The path to put the root folders that were already on the desktop
+organized_original_folders_path = os.path.join(desktop_path, 'OriginalFoldersOrganized')
