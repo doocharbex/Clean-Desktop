@@ -97,3 +97,18 @@ if __name__ == "__main__":
 
     # Then move the folders on the desktop to another folder
     organize_folders()
+    
+    
+    
+    print("""
+          
+          Create By : Dayan Ghanbari
+          
+          Github : https://github.com/doocharbex/
+          
+          Instagram : @o_369_o
+          
+          Telegram : @o_369_o
+          
+          
+          """)
