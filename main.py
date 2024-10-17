@@ -61,3 +61,25 @@ def organize_files():
                     except PermissionError:
                         print(f"PermissionError: Could not move {item}. It may be open in another program.")
                     break
+
+
+
+
+# Function to move the main desktop folders to the new folder
+def organize_folders():
+    # First, make sure the root folder exists to move the main desktop folders
+    if not os.path.exists(organized_original_folders_path):
+        os.makedirs(organized_original_folders_path)
+
+    # List of items on the desktop (we only move folders)
+    for item in os.listdir(desktop_path):
+        item_path = os.path.join(desktop_path, item)
+
+        # We only process folders (not files) and do not move new folders created by the tool
+        if os.path.isdir(item_path) and item not in ['OrganizedFoldersCreatedByTool', 'OriginalFoldersOrganized']:
+            dest_folder = os.path.join(organized_original_folders_path, item)
+            try:
+                shutil.move(item_path, dest_folder)
+                print(f'Moved folder {item} to OriginalFoldersOrganized')
+            except PermissionError:
+                print(f"PermissionError: Could not move folder {item}. It may be open in another program.")
